@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="VPT.Einkr.CairnsAgency/VPT.Einkr.CairnsAgency.csproj" />
+  <Project Path="VPT.Einkr.CairnsAgency.Tests/VPT.Einkr.CairnsAgency.Tests.csproj" />
+</Solution>

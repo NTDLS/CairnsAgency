@@ -1,0 +1,317 @@
+[
+ {
+  "name": "plain write",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "A fact.",
+     "Another fact."
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. A fact.\n2. Another fact."
+  ],
+  "json": "[\"A fact.\",\"Another fact.\"]",
+  "snapshot": "[\"A fact.\",\"Another fact.\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. A fact.\n2. Another fact."
+ },
+ {
+  "name": "replace-all",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "one",
+     "two"
+    ]
+   },
+   {
+    "notes": [
+     "two",
+     "three"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. one\n2. two",
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. two\n2. three"
+  ],
+  "json": "[\"two\",\"three\"]",
+  "snapshot": "[\"two\",\"three\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. two\n2. three"
+ },
+ {
+  "name": "user pinned, echoed with tag, duplicates",
+  "load": "[{\"text\":\"Josh likes C#\",\"source\":\"user\"},\"old model note\"]",
+  "writes": [
+   {
+    "notes": [
+     "[user] Josh likes C#",
+     "josh likes c#",
+     "new note",
+     "NEW NOTE",
+     "  "
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. [user] Josh likes C#\n2. new note"
+  ],
+  "json": "[{\"text\":\"Josh likes C#\",\"source\":\"user\"},\"new note\"]",
+  "snapshot": "[{\"text\":\"Josh likes C#\",\"source\":\"user\"},\"new note\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. [user] Josh likes C#\n2. new note"
+ },
+ {
+  "name": "tombstone refuses",
+  "load": "[\"keep\",{\"text\":\"Stale Thing\",\"source\":\"removed\"}]",
+  "writes": [
+   {
+    "notes": [
+     "keep",
+     "stale thing",
+     "fresh"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. keep\n2. fresh\n\nRemoved by the user (out of date or wrong) -- do not record these again:\n- Stale Thing\n\nThese were NOT kept -- the user removed them because they were out of date or wrong, so do not record them again:\n- \"stale thing\""
+  ],
+  "json": "[\"keep\",\"fresh\",{\"text\":\"Stale Thing\",\"source\":\"removed\"}]",
+  "snapshot": "[\"keep\",\"fresh\",{\"text\":\"Stale Thing\",\"source\":\"removed\"}]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. keep\n2. fresh\n\nRemoved by the user (out of date or wrong) -- do not record these again:\n- Stale Thing"
+ },
+ {
+  "name": "too many",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "note 0",
+     "note 1",
+     "note 2",
+     "note 3",
+     "note 4",
+     "note 5",
+     "note 6",
+     "note 7",
+     "note 8",
+     "note 9",
+     "note 10",
+     "note 11",
+     "note 12",
+     "note 13",
+     "note 14",
+     "note 15",
+     "note 16",
+     "note 17",
+     "note 18",
+     "note 19",
+     "note 20",
+     "note 21",
+     "note 22",
+     "note 23",
+     "note 24",
+     "note 25",
+     "note 26",
+     "note 27",
+     "note 28",
+     "note 29",
+     "note 30",
+     "note 31",
+     "note 32",
+     "note 33",
+     "note 34",
+     "note 35",
+     "note 36",
+     "note 37",
+     "note 38",
+     "note 39",
+     "note 40"
+    ]
+   }
+  ],
+  "results": [
+   "Error: 41 notes is too many -- keep at most 40. These are durable facts, not a log. Merge or drop the ones that no longer matter and send the shorter list."
+  ],
+  "json": "[]",
+  "snapshot": null,
+  "render": "Session notes: (none yet)."
+ },
+ {
+  "name": "exactly the cap",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "note 0",
+     "note 1",
+     "note 2",
+     "note 3",
+     "note 4",
+     "note 5",
+     "note 6",
+     "note 7",
+     "note 8",
+     "note 9",
+     "note 10",
+     "note 11",
+     "note 12",
+     "note 13",
+     "note 14",
+     "note 15",
+     "note 16",
+     "note 17",
+     "note 18",
+     "note 19",
+     "note 20",
+     "note 21",
+     "note 22",
+     "note 23",
+     "note 24",
+     "note 25",
+     "note 26",
+     "note 27",
+     "note 28",
+     "note 29",
+     "note 30",
+     "note 31",
+     "note 32",
+     "note 33",
+     "note 34",
+     "note 35",
+     "note 36",
+     "note 37",
+     "note 38",
+     "note 39"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. note 0\n2. note 1\n3. note 2\n4. note 3\n5. note 4\n6. note 5\n7. note 6\n8. note 7\n9. note 8\n10. note 9\n11. note 10\n12. note 11\n13. note 12\n14. note 13\n15. note 14\n16. note 15\n17. note 16\n18. note 17\n19. note 18\n20. note 19\n21. note 20\n22. note 21\n23. note 22\n24. note 23\n25. note 24\n26. note 25\n27. note 26\n28. note 27\n29. note 28\n30. note 29\n31. note 30\n32. note 31\n33. note 32\n34. note 33\n35. note 34\n36. note 35\n37. note 36\n38. note 37\n39. note 38\n40. note 39"
+  ],
+  "json": "[\"note 0\",\"note 1\",\"note 2\",\"note 3\",\"note 4\",\"note 5\",\"note 6\",\"note 7\",\"note 8\",\"note 9\",\"note 10\",\"note 11\",\"note 12\",\"note 13\",\"note 14\",\"note 15\",\"note 16\",\"note 17\",\"note 18\",\"note 19\",\"note 20\",\"note 21\",\"note 22\",\"note 23\",\"note 24\",\"note 25\",\"note 26\",\"note 27\",\"note 28\",\"note 29\",\"note 30\",\"note 31\",\"note 32\",\"note 33\",\"note 34\",\"note 35\",\"note 36\",\"note 37\",\"note 38\",\"note 39\"]",
+  "snapshot": "[\"note 0\",\"note 1\",\"note 2\",\"note 3\",\"note 4\",\"note 5\",\"note 6\",\"note 7\",\"note 8\",\"note 9\",\"note 10\",\"note 11\",\"note 12\",\"note 13\",\"note 14\",\"note 15\",\"note 16\",\"note 17\",\"note 18\",\"note 19\",\"note 20\",\"note 21\",\"note 22\",\"note 23\",\"note 24\",\"note 25\",\"note 26\",\"note 27\",\"note 28\",\"note 29\",\"note 30\",\"note 31\",\"note 32\",\"note 33\",\"note 34\",\"note 35\",\"note 36\",\"note 37\",\"note 38\",\"note 39\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. note 0\n2. note 1\n3. note 2\n4. note 3\n5. note 4\n6. note 5\n7. note 6\n8. note 7\n9. note 8\n10. note 9\n11. note 10\n12. note 11\n13. note 12\n14. note 13\n15. note 14\n16. note 15\n17. note 16\n18. note 17\n19. note 18\n20. note 19\n21. note 20\n22. note 21\n23. note 22\n24. note 23\n25. note 24\n26. note 25\n27. note 26\n28. note 27\n29. note 28\n30. note 29\n31. note 30\n32. note 31\n33. note 32\n34. note 33\n35. note 34\n36. note 35\n37. note 36\n38. note 37\n39. note 38\n40. note 39"
+ },
+ {
+  "name": "too many chars",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0",
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1",
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx2"
+    ]
+   }
+  ],
+  "results": [
+   "Error: the notes total 7503 characters, over the 6000 limit -- they ride in your context every round, so keep them terse. Shorten or drop some and send the list again."
+  ],
+  "json": "[]",
+  "snapshot": null,
+  "render": "Session notes: (none yet)."
+ },
+ {
+  "name": "missing notes",
+  "load": null,
+  "writes": [
+   {},
+   {
+    "notes": "not an array"
+   }
+  ],
+  "results": [
+   "Error: 'notes' is required and must be an array of strings.",
+   "Error: 'notes' is required and must be an array of strings."
+  ],
+  "json": "[]",
+  "snapshot": null,
+  "render": "Session notes: (none yet)."
+ },
+ {
+  "name": "object entries",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     {
+      "text": "from object"
+     },
+     42,
+     null,
+     "string"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. from object\n2. string"
+  ],
+  "json": "[\"from object\",\"string\"]",
+  "snapshot": "[\"from object\",\"string\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. from object\n2. string"
+ },
+ {
+  "name": "garbage load",
+  "load": "not json at all",
+  "writes": [
+   {
+    "notes": [
+     "ok"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. ok"
+  ],
+  "json": "[\"ok\"]",
+  "snapshot": "[\"ok\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. ok"
+ },
+ {
+  "name": "load non-array",
+  "load": "{\"a\":1}",
+  "writes": [
+   {
+    "notes": [
+     "ok"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. ok"
+  ],
+  "json": "[\"ok\"]",
+  "snapshot": "[\"ok\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. ok"
+ },
+ {
+  "name": "load user then model order",
+  "load": "[\"m1\",{\"text\":\"u1\",\"source\":\"user\"},\"m2\",{\"text\":\"u2\",\"source\":\"user\"}]",
+  "writes": [],
+  "results": [],
+  "json": "[{\"text\":\"u1\",\"source\":\"user\"},{\"text\":\"u2\",\"source\":\"user\"},\"m1\",\"m2\"]",
+  "snapshot": "[{\"text\":\"u1\",\"source\":\"user\"},{\"text\":\"u2\",\"source\":\"user\"},\"m1\",\"m2\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. [user] u1\n2. [user] u2\n3. m1\n4. m2"
+ },
+ {
+  "name": "unicode and quotes",
+  "load": null,
+  "writes": [
+   {
+    "notes": [
+     "café — \"quoted\" <b>&</b>",
+     "emoji 🪨"
+    ]
+   }
+  ],
+  "results": [
+   "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. café — \"quoted\" <b>&</b>\n2. emoji 🪨"
+  ],
+  "json": "[\"café — \\\"quoted\\\" <b>&</b>\",\"emoji 🪨\"]",
+  "snapshot": "[\"café — \\\"quoted\\\" <b>&</b>\",\"emoji 🪨\"]",
+  "render": "SESSION NOTES (durable notes for this run -- kept across compaction; prune YOUR notes with notes_write. Notes marked [user] were written by the user: they stay whatever you send, so do not resend or rewrite them):\n1. café — \"quoted\" <b>&</b>\n2. emoji 🪨"
+ }
+]

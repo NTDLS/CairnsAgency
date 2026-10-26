@@ -1,0 +1,170 @@
+[
+ {
+  "iso": "2026-10-17T00:30:00Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Friday, October 16, 2026 (2026-10-16)\nLocal time: 8:30 PM EDT (America/New_York, UTC-04:00)"
+ },
+ {
+  "iso": "2026-10-17T00:30:00Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Friday, October 16, 2026 (2026-10-16)\nLocal time: 7:30 PM CDT (America/Chicago, UTC-05:00)"
+ },
+ {
+  "iso": "2026-10-17T00:30:00Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Friday, October 16, 2026 (2026-10-16)\nLocal time: 5:30 PM PDT (America/Los_Angeles, UTC-07:00)"
+ },
+ {
+  "iso": "2026-10-17T00:30:00Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Saturday, October 17, 2026 (2026-10-17)\nLocal time: 12:30 AM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2026-12-25T15:00:00Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Friday, December 25, 2026 (2026-12-25)\nLocal time: 10:00 AM EST (America/New_York, UTC-05:00)"
+ },
+ {
+  "iso": "2026-12-25T15:00:00Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Friday, December 25, 2026 (2026-12-25)\nLocal time: 9:00 AM CST (America/Chicago, UTC-06:00)"
+ },
+ {
+  "iso": "2026-12-25T15:00:00Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Friday, December 25, 2026 (2026-12-25)\nLocal time: 7:00 AM PST (America/Los_Angeles, UTC-08:00)"
+ },
+ {
+  "iso": "2026-12-25T15:00:00Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Friday, December 25, 2026 (2026-12-25)\nLocal time: 3:00 PM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2026-03-08T06:59:59Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 1:59 AM EST (America/New_York, UTC-05:00)"
+ },
+ {
+  "iso": "2026-03-08T06:59:59Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 12:59 AM CST (America/Chicago, UTC-06:00)"
+ },
+ {
+  "iso": "2026-03-08T06:59:59Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Saturday, March 7, 2026 (2026-03-07)\nLocal time: 10:59 PM PST (America/Los_Angeles, UTC-08:00)"
+ },
+ {
+  "iso": "2026-03-08T06:59:59Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 6:59 AM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2026-03-08T07:00:00Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 3:00 AM EDT (America/New_York, UTC-04:00)"
+ },
+ {
+  "iso": "2026-03-08T07:00:00Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 1:00 AM CST (America/Chicago, UTC-06:00)"
+ },
+ {
+  "iso": "2026-03-08T07:00:00Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Saturday, March 7, 2026 (2026-03-07)\nLocal time: 11:00 PM PST (America/Los_Angeles, UTC-08:00)"
+ },
+ {
+  "iso": "2026-03-08T07:00:00Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Sunday, March 8, 2026 (2026-03-08)\nLocal time: 7:00 AM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2027-01-01T04:59:59Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Thursday, December 31, 2026 (2026-12-31)\nLocal time: 11:59 PM EST (America/New_York, UTC-05:00)"
+ },
+ {
+  "iso": "2027-01-01T04:59:59Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Thursday, December 31, 2026 (2026-12-31)\nLocal time: 10:59 PM CST (America/Chicago, UTC-06:00)"
+ },
+ {
+  "iso": "2027-01-01T04:59:59Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Thursday, December 31, 2026 (2026-12-31)\nLocal time: 8:59 PM PST (America/Los_Angeles, UTC-08:00)"
+ },
+ {
+  "iso": "2027-01-01T04:59:59Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Friday, January 1, 2027 (2027-01-01)\nLocal time: 4:59 AM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2026-10-17T04:00:00Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Saturday, October 17, 2026 (2026-10-17)\nLocal time: 12:00 AM EDT (America/New_York, UTC-04:00)"
+ },
+ {
+  "iso": "2026-10-17T04:00:00Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Friday, October 16, 2026 (2026-10-16)\nLocal time: 11:00 PM CDT (America/Chicago, UTC-05:00)"
+ },
+ {
+  "iso": "2026-10-17T04:00:00Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Friday, October 16, 2026 (2026-10-16)\nLocal time: 9:00 PM PDT (America/Los_Angeles, UTC-07:00)"
+ },
+ {
+  "iso": "2026-10-17T04:00:00Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Saturday, October 17, 2026 (2026-10-17)\nLocal time: 4:00 AM UTC (UTC, UTC+00:00)"
+ },
+ {
+  "iso": "2026-06-30T23:59:00Z",
+  "iana": "America/New_York",
+  "windows": "Eastern Standard Time",
+  "text": "Today's date: Tuesday, June 30, 2026 (2026-06-30)\nLocal time: 7:59 PM EDT (America/New_York, UTC-04:00)"
+ },
+ {
+  "iso": "2026-06-30T23:59:00Z",
+  "iana": "America/Chicago",
+  "windows": "Central Standard Time",
+  "text": "Today's date: Tuesday, June 30, 2026 (2026-06-30)\nLocal time: 6:59 PM CDT (America/Chicago, UTC-05:00)"
+ },
+ {
+  "iso": "2026-06-30T23:59:00Z",
+  "iana": "America/Los_Angeles",
+  "windows": "Pacific Standard Time",
+  "text": "Today's date: Tuesday, June 30, 2026 (2026-06-30)\nLocal time: 4:59 PM PDT (America/Los_Angeles, UTC-07:00)"
+ },
+ {
+  "iso": "2026-06-30T23:59:00Z",
+  "iana": "UTC",
+  "windows": "UTC",
+  "text": "Today's date: Tuesday, June 30, 2026 (2026-06-30)\nLocal time: 11:59 PM UTC (UTC, UTC+00:00)"
+ }
+]

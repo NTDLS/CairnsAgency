@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<Version>0.1.0</Version>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>VPT.Einkr.CairnsAgency</RootNamespace>
+		<AssemblyName>VPT.Einkr.CairnsAgency</AssemblyName>
+		<UserSecretsId>vpt-einkr-cairns-agency</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Lets `sc create` / the installer run this as a real Windows service. A no-op when run from a console. -->
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The tool schemas (exported from the Electron renderer by Scripts/export-tool-definitions.js) and the
+         charter the agency leaves in the archive travel inside the assembly, so the service has no loose files
+         to lose. -->
+		<EmbeddedResource Include="Resources\tool-definitions.json" LogicalName="tool-definitions.json" />
+		<EmbeddedResource Include="Resources\AGENCY.md" LogicalName="AGENCY.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="VPT.Einkr.CairnsAgency.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+		<None Update="appsettings.Local.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('appsettings.Local.json')" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,4 @@
+appsettings.Local.json
+state/
+bin/
+obj/

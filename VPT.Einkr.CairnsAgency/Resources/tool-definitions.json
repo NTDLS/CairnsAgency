@@ -1,0 +1,985 @@
+{
+  "local": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_file",
+        "description": "Read a whole small file in one shot. For a large file use `read_file` with `offset`/`limit` instead -- this refuses past a size cap.\nReturns the full contents, or an error naming the cap and pointing you at `read_file`.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "find_files",
+        "description": "Find files by path/name pattern (glob). Use to locate files whose contents you do not yet need; for file CONTENTS use `search_code`, and to list one directory use `list_dir`.\nReturns matching paths relative to the working directory.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "Glob pattern, e.g. `*.cs` or `**/Services/*.cs`"
+            }
+          },
+          "required": [
+            "pattern"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "read_file",
+        "description": "Read a file. Small files come back whole; for a large file pass `offset` (1-based start line) and `limit` for a window -- the footer gives the next `offset`.\nFor a big source file or document, PREFER `outline_file` then `read_section` over reading the whole thing; a large source file read from the top already leads with a definition map.\nRead several files at once with `paths` (up to 10) rather than one call each. NEVER read a file through the shell (`run_command` with `type`/`more`) to get its bytes -- that leaves it unanchored, so a later `edit_file` is refused as never-read.\nReturns numbered lines plus a footer with the line range and next offset. `offset`/`limit` apply to `path` only.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "File path relative to the working directory"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Several file paths to read in one call, up to 10. Use instead of `path`."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "1-based line to start from. Optional; ignored with `paths`."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Number of lines to read from `offset`. Optional; capped. Ignored with `paths`."
+            }
+          }
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "outline_file",
+        "description": "Map a file's structure -- names, line ranges and sizes -- WITHOUT its content: markdown headings for a document, or definitions (namespaces, types, methods, functions) for a source file (C#, JS/TS, Python).\nSTART HERE for any large file: the map costs a few KB however long the file is. Then `read_section` the one part you need instead of pulling the whole file into context.\nReturns one line per section/definition with its line range and size.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "read_section",
+        "description": "Read ONE named part of a file: a document heading's own content, or a source definition's body (a method, function or type), stopping where the next one begins.\nA part that has subsections returns its intro plus a list of them, NOT their bodies -- read those by name -- so no passage is ever returned twice and you can walk an outline without re-reading parents.\nUse the name exactly as `outline_file` reported it. For a whole file use `read_file`.\nReturns the matched part's line range and text.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory"
+            },
+            "section": {
+              "type": "string",
+              "description": "Heading or definition name, exactly as `outline_file` shows it. Leading `#` optional."
+            }
+          },
+          "required": [
+            "path",
+            "section"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "list_dir",
+        "description": "List the files and subdirectories directly inside one directory. Use `.` for the working-directory root.\nTo find files by pattern across the tree use `find_files`; for file contents use `search_code`.\nReturns the entries, marking directories.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Directory path relative to the working directory"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_code",
+        "description": "Search file CONTENTS for a literal string or regex, like grep. Use to find where text or a symbol appears; to find files by NAME use `find_files`, and to map one file's structure use `outline_file`.\nAn empty result is a real answer -- the text is not there in that form. NEVER re-run the same search expecting a different result; read the file and look, or search for something else.\nReturns matching paths with line numbers and the matching line's text.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string",
+              "description": "Literal text or regex to search for"
+            },
+            "file_glob": {
+              "type": "string",
+              "description": "Optional glob to limit which files are searched, e.g. `*.cs`. Defaults to all files."
+            },
+            "max_results": {
+              "type": "integer",
+              "description": "Max matches to return. Optional; defaults to 50, capped at 100."
+            },
+            "case_insensitive": {
+              "type": "boolean",
+              "description": "Match regardless of case. Optional; defaults to false."
+            },
+            "context_lines": {
+              "type": "integer",
+              "description": "Lines of context before/after each match, like `grep -C`. Optional; capped at 10."
+            }
+          },
+          "required": [
+            "pattern"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "view_image",
+        "description": "Look at an image file -- a screenshot, a render, a diagram -- and get a description of what it actually shows. Use this to VERIFY visual output: after your test harness saves a screenshot, view it to confirm the feature is on screen and not a blank/black frame, a stack trace, or the wrong thing.\nA passing exit code proves the page did not crash; it does NOT prove anything rendered. When a milestone is meant to show something, view its screenshot before believing it.\nAsk a specific `question` to focus the answer (e.g. \"Is a city with roads and buildings visible, or is the frame black/empty?\"). Returns a text description of the image.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Image file path relative to the working directory (png, jpg, gif, webp, bmp)"
+            },
+            "question": {
+              "type": "string",
+              "description": "Optional. What to look for, so the description answers it directly."
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "write_file",
+        "description": "Create a NEW file, or fully overwrite an existing one when a change is too extensive for a targeted edit.\nSHOULD prefer `edit_file` for changes to an existing file -- overwriting loses the anchor and rewrites the whole thing.\nReturns success, or an error.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory"
+            },
+            "content": {
+              "type": "string",
+              "description": "Full new file contents"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ]
+        }
+      },
+      "category": "write"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "edit_file",
+        "description": "Replace one occurrence of `old_string` with `new_string` in an existing file.\nMUST have read this file earlier in the conversation (`read_file`/`get_file`/`read_section`) and copied `old_string` from that output -- an edit to a never-read or since-changed file is refused. `old_string` MUST identify a SINGLE location; if it matches more than once, add surrounding context. Whitespace and indentation are matched tolerantly, so small drift is forgiven, but copy faithfully.\nFor a brand-new file or a wholesale rewrite use `write_file`.\nReturns success, or an error naming the cause (not found / matched more than once / stale read).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory"
+            },
+            "old_string": {
+              "type": "string",
+              "description": "Existing text to replace -- must identify exactly one location"
+            },
+            "new_string": {
+              "type": "string",
+              "description": "Text to replace it with"
+            }
+          },
+          "required": [
+            "path",
+            "old_string",
+            "new_string"
+          ]
+        }
+      },
+      "category": "write"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "delete_path",
+        "description": "Delete a file, or a directory and everything under it, within the working directory. Irreversible.\nNEVER use this to \"clear\" a file you are about to rewrite -- `write_file` overwrites in place. Returns success or an error.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory to delete"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "write"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "rename_path",
+        "description": "Rename or move a file or directory within the working directory. Fails if the destination already exists. To copy instead, `read_file` then `write_file`. Returns success or an error.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "source_path": {
+              "type": "string",
+              "description": "Path relative to the working directory to rename/move"
+            },
+            "destination_path": {
+              "type": "string",
+              "description": "Path relative to the working directory it should become"
+            }
+          },
+          "required": [
+            "source_path",
+            "destination_path"
+          ]
+        }
+      },
+      "category": "write"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "run_build",
+        "description": "Build a .NET project or solution with `dotnet build` and report success/failure with compiler errors and warnings. Run it to verify C# compiles before calling a step done.\n.NET/C# ONLY -- useless for Go, Node/TypeScript, Java, Python or any other stack; for those use `run_command` with that project's own build/test command.\nReturns the build result and any diagnostics.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "project_or_solution_path": {
+              "type": "string",
+              "description": "Path relative to the working directory to a `.csproj` or `.sln`"
+            },
+            "configuration": {
+              "type": "string",
+              "description": "Build configuration, e.g. `Debug` or `Release`. Defaults to `Debug`."
+            }
+          },
+          "required": [
+            "project_or_solution_path"
+          ]
+        }
+      },
+      "category": "dotnetbuild"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "dotnet_new",
+        "description": "Scaffold a .NET project, solution or item via `dotnet new <template>`.\n.NET/C# ONLY -- for Go, Node/TypeScript, Java, Python or any other stack, scaffold with `run_command` and that ecosystem's own tool (`go mod init`, `npm init`) or just `write_file` the files.\nRun with `template_short_name: 'list'` first if unsure of the exact template. NEVER guess an older `--framework` (net8.0/net9.0/etc.) -- omit it to use the current default.\nReturns the command output.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "template_short_name": {
+              "type": "string",
+              "description": "Template short name, e.g. `console`, `classlib`, `sln`, `gitignore`, or `list` to enumerate templates instead of scaffolding."
+            },
+            "name": {
+              "type": "string",
+              "description": "Name for the created output (`-n`/`--name`). Optional."
+            },
+            "output_path": {
+              "type": "string",
+              "description": "Path relative to the working directory to create output in (`-o`/`--output`). Optional; defaults to the working directory."
+            },
+            "extra_args": {
+              "type": "string",
+              "description": "Additional raw arguments, e.g. `--framework net10.0`. Optional. Do NOT guess an older major version -- omit `--framework` to use the template default."
+            }
+          },
+          "required": [
+            "template_short_name"
+          ]
+        }
+      },
+      "category": "dotnetbuild"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "check_js_syntax",
+        "description": "Parse a JavaScript file with `node --check` (no execution) to catch syntax errors -- the JS equivalent of `run_build` verifying C#. Run after JS edits before calling a step done.\nCatches ONLY syntax errors, not logic bugs or undefined references. Returns OK, or the parse error with its location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the working directory to the `.js` file to check"
+            }
+          },
+          "required": [
+            "path"
+          ]
+        }
+      },
+      "category": "dotnetbuild"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "run_command",
+        "description": "Run a command via `cmd.exe` (\"cmd.exe /s /c <command>\") in the working directory; returns combined stdout+stderr.\nPlain Windows `cmd.exe` -- NOT PowerShell, NOT a Unix shell. Not sandboxed: same filesystem/network access as this app. Your command is passed verbatim, so quotes nest correctly, but `%NAME%` expands as a variable and `& | < > ^` are operators unless quoted; single quotes are NOT string delimiters.\nThree mistakes each cost a wasted round -- check before sending:\n1. NEVER use Unix tools -- no `tail`, `head`, `grep`, `cat`, `ls`, `wc`, `sed`, `awk`, `touch`. Use `dir`, `type`, `findstr`, `more +N`, or do the work in a script.\n2. To start something that keeps running (dev server, watcher) MUST pass `background: true`. NEVER detach with `&` or `start /b` -- `&` only separates two commands, and `start /b` leaves the child holding this call's pipes, so either way the call blocks for the full timeout and then kills the process you were starting. `background: true` returns immediately with a log file to `read_file`.\n3. For anything past a one-liner -- multi-line, nested quoting, literal `%`, inline `node -e`/`python -e` -- `write_file` a script and run that; it avoids shell parsing entirely.\nTo read a file's contents use `read_file`, not `type`/`more` -- a shell read leaves the file unanchored for `edit_file`.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "Shell command to execute"
+            },
+            "background": {
+              "type": "boolean",
+              "description": "Start a long-running process (server, watcher) and return immediately instead of waiting. Output goes to a log file named in the result; read it with `read_file`. The process keeps running. Default false."
+            },
+            "timeout_minutes": {
+              "type": "integer",
+              "description": "Timeout in minutes; defaults to 10. Ignored when `background` is true."
+            }
+          },
+          "required": [
+            "command"
+          ]
+        }
+      },
+      "category": "shell"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "stop_command",
+        "description": "Stop a process started by `run_command` with `background: true`, and anything it spawned; pass its `pid`.\nDo this as soon as you no longer need it -- a leftover server holds its port and the next thing that needs that port fails to bind. Returns success or an error.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "pid": {
+              "type": "integer",
+              "description": "Process id, as reported by the `run_command` call that started it"
+            }
+          },
+          "required": [
+            "pid"
+          ]
+        }
+      },
+      "category": "shell"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_status",
+        "description": "Show the working-tree status: current branch, and which files are staged, modified or untracked.\nCall before `git_add`/`git_commit` to see what will actually be included. Returns the status listing.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_diff",
+        "description": "Show a unified diff of uncommitted changes -- unstaged by default; pass `staged: true` for what is staged and about to be committed. Optionally scope to one `path`.\nReturns the diff, or empty if there is nothing to show.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Optional repo-relative path to limit the diff to"
+            },
+            "staged": {
+              "type": "boolean",
+              "description": "Show staged changes (`git diff --staged`) instead of unstaged. Default false."
+            }
+          }
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_log",
+        "description": "Show recent commit history (hash, author, date, subject) on the current branch, newest first.\nReturns up to `max_count` commits.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "max_count": {
+              "type": "integer",
+              "description": "Max commits to show. Optional; defaults to 20, capped at 100."
+            }
+          }
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_add",
+        "description": "Stage a path for the next commit; `.` (the default) stages every change in the working directory.\nRun `git_status` first if unsure what will be picked up. Returns success.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Repo-relative path to stage, or `.` for everything. Optional; defaults to `.`."
+            }
+          }
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_commit",
+        "description": "Commit currently staged changes. Fails with \"nothing to commit\" if `git_add` has staged nothing yet.\nReturns the new commit's summary.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Commit message"
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_branch",
+        "description": "List local branches (current one marked), or pass `create_branch_name` to create a branch from HEAD WITHOUT switching to it -- use `git_checkout` afterward to switch. Returns the branch list or a confirmation.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "create_branch_name": {
+              "type": "string",
+              "description": "If given, create a branch with this name instead of listing."
+            }
+          }
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_checkout",
+        "description": "Switch to an existing branch, or create and switch to a new one with `create: true`. Returns a confirmation.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "branch": {
+              "type": "string",
+              "description": "Branch name to switch to"
+            },
+            "create": {
+              "type": "boolean",
+              "description": "Create the branch (from HEAD) if it does not exist. Default false."
+            }
+          },
+          "required": [
+            "branch"
+          ]
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_push",
+        "description": "Push the current branch's commits to its remote, setting the upstream tracking branch on first push. Uses the git credentials already configured on this machine. Returns the push result.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_fetch",
+        "description": "Fetch the latest commits from the remote WITHOUT merging them. Follow with `git_pull` to actually merge them into the current branch. Returns what was fetched.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "git_pull",
+        "description": "Fetch from the remote and merge into the current branch (`git pull --ff-only`) -- fails rather than creating a merge commit if the branches have diverged. Returns the merge result.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "category": "git"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "submit_plan",
+        "description": "Call EXACTLY ONCE, when planning is finished, with the completed plan. Ends the planning turn -- do not keep working after it. All fields are required.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "string",
+              "description": "One or two sentences: what will be built."
+            },
+            "assumptions": {
+              "type": "string",
+              "description": "What you took as given, and any decision you made on the user's behalf."
+            },
+            "discovery_notes": {
+              "type": "string",
+              "description": "What you actually found in the workspace that shaped the plan."
+            },
+            "plan": {
+              "type": "string",
+              "description": "The ordered steps to implement."
+            },
+            "risks": {
+              "type": "string",
+              "description": "What could go wrong or needs watching."
+            }
+          },
+          "required": [
+            "summary",
+            "assumptions",
+            "discovery_notes",
+            "plan",
+            "risks"
+          ]
+        }
+      },
+      "category": "planning"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "finish_verification",
+        "description": "Call EXACTLY ONCE, when you have finished checking the step. Ends the verification turn.\nSet `passed: true` ONLY if every check genuinely holds against what is actually on disk; if you could not determine one, set false and say so in `findings`.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "boolean",
+              "description": "True ONLY if every check holds. Could not tell → false, and explain in `findings`."
+            },
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "One entry per check: what you looked at and what you concluded. Required whether or not it passed."
+            }
+          },
+          "required": [
+            "passed",
+            "findings"
+          ]
+        }
+      },
+      "category": "verification"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "compact",
+        "description": "Summarize the earlier part of this turn and continue from the summary, freeing context now rather than waiting until you run out.\nUse it before something large -- writing a long file, reading a big section -- when the conversation is ALREADY long. Skip it early in a turn; there is nothing worth summarizing yet.\nWhat survives: a summary of what has happened, the most recent messages verbatim, and your task list restated in full. What does not: the detail of everything older. MUST write anything else you still need into the task list first.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      },
+      "category": "agent"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "checkpoint",
+        "description": "Mark a point before exploratory work, so the reading you are about to do can be thrown away afterward and replaced by what you learned.\nUse it before an investigation that will take many `read_file`/`search_code`/`outline_file` calls to answer one question -- tracing how something is wired, finding where a value comes from, working out why a test fails. Skip it for work whose output you are keeping.\nRules:\n- MUST finish with `rewind`. A checkpoint you never rewind keeps every call you made.\n- One at a time. You cannot `checkpoint` while a checkpoint is open.\n- Do NOT make lasting changes inside one. Files you write survive, but the record of why will not, so write anything worth keeping into the `rewind` report.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "goal": {
+              "type": "string",
+              "description": "What you are trying to find out -- one sentence"
+            }
+          },
+          "required": [
+            "goal"
+          ]
+        }
+      },
+      "category": "agent"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "rewind",
+        "description": "Close the open `checkpoint`: every message since it was set is removed from your context and replaced by the report you give here.\nThe report is ALL that survives, so it MUST stand alone -- names, paths, line numbers, the answer itself. Anything you leave out is gone, and re-finding it costs the whole investigation again.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "report": {
+              "type": "string",
+              "description": "What you found. Self-contained -- assume the reader cannot see any of the work."
+            }
+          },
+          "required": [
+            "report"
+          ]
+        }
+      },
+      "category": "agent"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "ask_user",
+        "description": "Ask the user to settle something you cannot work out for yourself, and wait for the answer.\nUse it ONLY for decisions that are genuinely theirs -- which of two designs, which database, whether an ambiguous requirement means A or B. Ask while you are still planning; once you start writing files it is too late and you will be refused.\nDo NOT use it for anything the workspace can answer. \"What framework is this\", \"where does X live\" -- read the files instead; that is faster and you will be right more often.\nRules:\n- Batch them. One call, up to 5 questions, one form. Asking one at a time wastes everyone's time.\n- Every question needs at least 2 concrete options and EXACTLY ONE marked `recommended` -- it is used if nobody answers, so it must be a choice you would defend.\n- If you cannot think of two real options, you do not have a question. Decide, and say what you assumed.\n- You get very few of these per run. Spend them on what changes the shape of the work.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "questions": {
+              "type": "array",
+              "description": "Up to 5 questions, each with 2-4 options.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "description": "The decision, in one sentence. Say why it matters if that is not obvious."
+                  },
+                  "options": {
+                    "type": "array",
+                    "description": "2-4 answers you could act on. EXACTLY ONE has `recommended: true`.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "The answer, short enough to read at a glance."
+                        },
+                        "recommended": {
+                          "type": "boolean",
+                          "description": "True on exactly one option per question."
+                        }
+                      },
+                      "required": [
+                        "label"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "question",
+                  "options"
+                ]
+              }
+            }
+          },
+          "required": [
+            "questions"
+          ]
+        }
+      },
+      "category": "ask"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "todowrite",
+        "description": "Create and maintain your task list for this session -- how you plan multi-step work and how the user sees what you are doing.\nUse it when the work takes 3+ distinct steps, when you are handed a specification or a list of requirements, or when you discover new work while building. Skip it for a single edit or a question.\nRules:\n- Send the COMPLETE list every time. This REPLACES the previous list, it does not append.\n- EXACTLY ONE item is `in_progress` at a time. Mark an item `in_progress` before you start it.\n- Mark an item `completed` as soon as it is genuinely done and verified -- not when you intend to do it, and NEVER batched up at the end.\n- If something blocks you, leave the item `in_progress` and add a new item describing the blocker.\n- Add items as you discover them. A plan that never changes while you build is a plan you stopped reading.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "todos": {
+              "type": "array",
+              "description": "The complete task list, in the order the work should happen.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Stable identifier for this item. Keep it the same across updates."
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "What the step actually is, specific enough to act on."
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "in_progress",
+                      "completed",
+                      "cancelled"
+                    ]
+                  }
+                },
+                "required": [
+                  "content",
+                  "status"
+                ]
+              }
+            }
+          },
+          "required": [
+            "todos"
+          ]
+        }
+      },
+      "category": "agent"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "notes_write",
+        "description": "Keep durable notes for THIS session -- facts you worked to establish and will need again: a decision made, where something lives, a gotcha, a constraint. They persist for the whole session and survive compaction, so a note here outlives the tool result that discovered it.\nTHIS tool IS how you take notes. When the user says \"take note\", \"remember this\", or \"use the notes tool\", call notes_write. NEVER create or edit a NOTES.md (or any other notes file) with write_file/edit_file to record notes -- a file does not survive compaction, is not shown in the notes panel, and is not what the user means; this tool is.\nSend the COMPLETE list every time -- this REPLACES your notes, it does not append. To add, resend the whole list plus the new note; to edit or delete one, resend the list changed.\nNotes marked [user] in the list are the USER's own. They are permanent: they stay whatever you send, so leave them out of your list and never rewrite them. Treat them as established facts and standing instructions for this session.\nRecord only SETTLED facts -- decisions actually MADE, confirmed constraints, where something lives. NEVER note open questions, pending/suggested decisions, or anything \"awaiting the user's answer\": those go stale the instant they are resolved and belong in the conversation (ask the user, or use ask_user), not here. Not a running log of what you just did either -- your task list and messages are for that. A handful of durable facts is right; a play-by-play, or a list of things still TBD, is not.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The complete notes list, each entry one terse durable fact. Replaces the previous notes."
+            }
+          },
+          "required": [
+            "notes"
+          ]
+        }
+      },
+      "category": "notes"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "finish_task",
+        "description": "Call EXACTLY ONCE, when the task is completely done. Ends your turn with `summary` as your final message -- do NOT just stop and reply in plain text instead, this is the only way to end the task.\nSet `outcome` to `implemented` if you made file changes and verified them (e.g. with `run_build`), or `no_changes_needed` if you determined -- through actual discovery, not assumption -- that no code changes are required.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "implemented",
+                "no_changes_needed"
+              ]
+            },
+            "summary": {
+              "type": "string",
+              "description": "The final account of what you did (or why nothing was needed). This is what dependent work receives."
+            }
+          },
+          "required": [
+            "outcome",
+            "summary"
+          ]
+        }
+      },
+      "category": "implementation"
+    }
+  ],
+  "web": [
+    {
+      "type": "function",
+      "function": {
+        "name": "web_search",
+        "description": "Search the web (via Brave) for current information, documentation, or anything not already in the workspace or your knowledge. Then `fetch_url` a promising result to read it in full.\nDo NOT use it for anything the workspace can answer -- read the files instead. Returns a list of result titles, URLs and snippets.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of results to return. Optional; default 5."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "fetch_url",
+        "description": "Fetch one web page and return its readable text. Use after `web_search` to read a result in full, or for a URL you already know.\nReturns the page's extracted text, or an error.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The absolute `http://` or `https://` URL to fetch."
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      }
+    }
+  ],
+  "toolOutput": [
+    {
+      "type": "function",
+      "function": {
+        "name": "read_tool_output",
+        "description": "Read part of a large tool result that was moved out of the conversation. Use it when a tool result says it was saved as tool output `<id>`.\nReads `limit` lines starting at `offset` (1-based); the footer gives the next `offset`. JSON results are re-indented, so one field or array item per line -- read a window, do not try to take it all in at once. To find something specific, `search_tool_output` is faster than paging.\nReturns numbered lines plus a footer with the line range and next offset.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The tool output id from the stand-in message (letters and digits)."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "1-based line to start from. Optional; defaults to 1."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Number of lines to read. Optional; defaults to 300."
+            }
+          },
+          "required": [
+            "id"
+          ]
+        }
+      },
+      "category": "discovery"
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_tool_output",
+        "description": "Search a large tool result that was moved out of the conversation for a literal string or regex, like grep. Use it to jump to the part you need -- a function name, an address, a field -- instead of paging through it with `read_tool_output`.\nReturns matching line numbers with their text; read around a match with `read_tool_output` and that line number as the `offset`.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The tool output id from the stand-in message."
+            },
+            "pattern": {
+              "type": "string",
+              "description": "Literal text or regex to search for."
+            },
+            "context_lines": {
+              "type": "integer",
+              "description": "Lines of context before/after each match. Optional; defaults to 2."
+            },
+            "max_results": {
+              "type": "integer",
+              "description": "Max matches to return. Optional; defaults to 30."
+            },
+            "case_insensitive": {
+              "type": "boolean",
+              "description": "Match regardless of case. Optional."
+            }
+          },
+          "required": [
+            "id",
+            "pattern"
+          ]
+        }
+      },
+      "category": "discovery"
+    }
+  ],
+  "utility": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_date_time",
+        "description": "Get today's date (and the local time) on the user's machine. You cannot know it -- your training ends well before now, so anything you remember as \"the latest\" may be out of date. Call this BEFORE judging what is new, latest, current, recent or outdated: news, library and framework versions, APIs, code, documentation and release notes. Also call it for a date you will write into a file or document (copyright years, changelogs) or when asked what day or year it is. Then check anything that may have changed since your training with web search or the docs instead of trusting memory.\nReturns today's date with the weekday, and the local time and time zone.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      "category": "discovery"
+    }
+  ]
+}
